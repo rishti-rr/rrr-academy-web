@@ -12,7 +12,7 @@ const CoursesData = [
     img: Img1,
     title: "IELTS"
   },
-  {
+ {
     id: 2,
     img: Img2,
     title: "Digital Marketing"

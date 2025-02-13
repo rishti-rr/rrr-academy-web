@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../Login/firebaseConfig"; 
 import { IoClose, IoEye, IoEyeOff } from "react-icons/io5";
@@ -23,19 +23,31 @@ const NavbarMenu = [
   {
     id: 4,
     title: "Contact Us",
-    path: "/contact",
+    path: "#",
+    onClick: "handleScrollToFooter"
   },
 ];
 
 const Navbar = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    if (e.target.value.length > 0) {
+      navigate(`/all-courses?search=${e.target.value}`); 
+    } else {
+      navigate(`/all-courses`); 
+    }
+  };
 
   const handleAuth = async () => {
     try {
@@ -51,6 +63,13 @@ const Navbar = () => {
     }
   };
 
+  const handleScrollToFooter = () => {
+    const footer = document.getElementById("footer");
+    if (footer) {
+      footer.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+  
   return (
     <nav className="relative z-20">
       <div className="container py-10 flex justify-between items-center">
@@ -61,18 +80,27 @@ const Navbar = () => {
           <ul className="flex items-center gap-3">
             {NavbarMenu.map((menu) => (
               <li key={menu.id}>
+                {menu.id === 4 ? (
+                 <button onClick={handleScrollToFooter} className="inline-block py-2 px-3 hover:text-secondary">
+                    {menu.title}
+                 </button>
+               ) : (
                 <Link to={menu.path} className="inline-block py-2 px-3 hover:text-secondary">
-                  {menu.title}
-                 
+                   {menu.title}
                 </Link>
-              </li>
-            ))}
-            {/* <li>
-              <button onClick={() => navigate("/about")} className="primary-btn">
-                About
-              </button>
-            </li> */}
+               )}
+           </li>
 
+            ))}
+           <li>
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={handleSearch}
+                placeholder="Search courses or books..."
+                className="py-2 px-3 rounded-md border"
+              />
+            </li>
 
             <li>
               <button onClick={() => setShowAuthModal(true)} className="primary-btn">

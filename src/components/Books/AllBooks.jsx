@@ -1,5 +1,5 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import Book1 from "../../assets/books/book1.jpeg";
 import Book2 from "../../assets/books/book2.jpeg";
 import Book3 from "../../assets/books/book3.jpeg";
@@ -11,11 +11,29 @@ const booksData = [
   { id: 3, img: Book3, title: "Nineteen Eighty-Four", rating: 4.7, author: "George Orwell" },
   { id: 4, img: Book2, title: "His Life", rating: 4.4, author: "Someone" },
   { id: 5, img: Book1, title: "Who's There", rating: 4.5, author: "Someone" },
-  // Add more book data as needed
+ 
 ];
 
 const AllBooks = () => {
     const navigate = useNavigate();
+    const [filteredBooks, setFilteredBooks] = useState(booksData);
+    const location = useLocation();
+
+    useEffect(() => {
+      const searchParams = new URLSearchParams(location.search);
+      const searchTerm = searchParams.get("search");
+  
+      if (searchTerm) {
+        setFilteredBooks(
+          booksData.filter((book) =>
+            book.title.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+        );
+      } else {
+        setFilteredBooks(booksData);
+      }
+    }, [location]);
+
   return (
     <div className="mt-14 mb-12">
       <div className="container">
@@ -36,7 +54,7 @@ const AllBooks = () => {
                   src={img}
                   alt={title}
                   className="w-full h-[200px] object-cover rounded-md mb-3"
-                />
+               />
                 <h3 className="text-lg font-semibold">{title}</h3>
                 <p className="text-sm text-gray-700">{author}</p>
                 <div className="flex items-center gap-1 justify-center">

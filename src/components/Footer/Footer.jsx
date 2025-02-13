@@ -1,10 +1,12 @@
 import React from "react";
 import { FaInstagram, FaWhatsapp, FaYoutube } from "react-icons/fa";
-import { TbWorldWww } from "react-icons/tb";
+import { useNavigate } from "react-router-dom";
 
 const Footer = () => {
+  const navigate = useNavigate();
+
   return (
-    <footer className="py-28 bg-[#b9eee4]">
+    <footer id="footer" className="py-28 bg-[#b9eee4]">
       <div
         className="container"
       >

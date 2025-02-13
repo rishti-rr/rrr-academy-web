@@ -8,6 +8,20 @@ import HeroPng from "../../assets/hero1.png";
 const Hero = () => {
   const navigate = useNavigate();
 
+  const scrollToCourses = () => {
+    const coursesSection = document.getElementById("courses-section");
+    if (coursesSection) {
+      coursesSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const scrollToBooks = () => {
+    const booksSection = document.getElementById("books-section");
+    if (booksSection) {
+      booksSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+ 
   return (
     <section className="bg-emerald-100 relative overflow-hidden">
       <Navbar />
@@ -26,7 +40,7 @@ const Hero = () => {
             >
               <button 
               className="primary-btn flex items-center gap-2 group"
-              onClick={() => navigate("/all-courses")}
+              onClick={scrollToCourses}
               >
                 Get Courses
                 
@@ -34,7 +48,7 @@ const Hero = () => {
               </button>
               <button 
               className="primary-btn flex items-center gap-2 group"
-              onClick={() => navigate("/all-books")}
+              onClick={scrollToBooks}
               >
                 Get Books
                 <IoIosArrowRoundForward className="text-xl group-hover:translate-x-2 group-hover:-rotate-45 duration-300" />

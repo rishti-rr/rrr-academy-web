@@ -1,11 +1,11 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import Img1 from "../../assets/course/Img1.jpg";
 import Img2 from "../../assets/course/Img2.jpg";
 import Img3 from "../../assets/course/Img3.jpg";
 import Img4 from "../../assets/course/Img4.jpg";
 import Img5 from "../../assets/course/Img5.jpg";
-
+ 
 const CoursesData = [
   { id: 1, img: Img1, title: "IELTS" },
   { id: 2, img: Img2, title: "Digital Marketing" },
@@ -16,16 +16,33 @@ const CoursesData = [
 
 const AllCourses = () => {
   const navigate = useNavigate();
+  const [filteredCourses, setFilteredCourses] = useState(CoursesData);
+  const location = useLocation();
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const searchTerm = searchParams.get("search");
+
+    if (searchTerm) {
+      setFilteredCourses(
+        CoursesData.filter((course) =>
+          course.title.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredCourses(CoursesData);
+    }
+  }, [location]);
 
   return (
     <div className="container mx-auto py-10">
-      {/* Heading */}
+     
       <div className="text-center mb-6">
         <h1 className="text-3xl font-bold">All Courses</h1>
         <p className="text-gray-600">Explore all available courses</p>
       </div>
 
-      {/* Courses Grid */}
+     
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4">
         {CoursesData.map((course) => (
           <div key={course.id} className="bg-white shadow-md rounded-lg p-4 text-center">
@@ -39,7 +56,7 @@ const AllCourses = () => {
         ))}
       </div>
 
-      {/* Back Button */}
+      
       <div className="flex justify-center mt-6">
         <button
           className="bg-gray-700 text-white px-6 py-2 rounded-md hover:bg-gray-900 transition"

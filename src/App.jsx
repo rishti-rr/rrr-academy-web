@@ -26,9 +26,13 @@ const App = () => {
       {!isAllCoursesPage && !isAllBooksPage && !isAboutPage && !isServicesPage &&(
         <>
           <Hero />
-          <Courses />
+          <div id="courses-section">
+            <Courses />
+          </div>
           <Banner />
-          <Books />
+          <div id="books-section">
+            <Books />
+          </div>
           <Subscribe />
           <Footer />
         </>
@@ -46,6 +50,7 @@ const App = () => {
         <Route path="/auth" element={<AuthForm />} />
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<Services />} /> 
+        {/* <Route path="/footer" element={<Footer/> } /> */}
       </Routes>    
     </main>
     </>
