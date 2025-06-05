@@ -205,6 +205,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Img1 from "../../assets/course/Img1.jpg";
 import Img2 from "../../assets/course/Img2.jpg";
 import Img3 from "../../assets/course/Img3.jpg";
@@ -214,6 +215,7 @@ import Img5 from "../../assets/course/Img5.jpg";
 const AllCourses = () => {
   const [filteredCourses, setFilteredCourses] = useState([]);
   const navigate = useNavigate();
+  
 
   useEffect(() => {
     // Static fallback content from original comment

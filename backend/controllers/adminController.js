@@ -2,15 +2,44 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Course = require('../models/Course');
 const Book = require('../models/Book');
+const Admin = require('../models/Admin');
 
-// Admin login (simple password-based)
-exports.login = async (req, res) => {
-  const { username, password } = req.body;
-  if (username === 'admin' && password === 'adminpassword') {
-    const token = jwt.sign({ username: 'admin' }, 'secretkey', { expiresIn: '1h' });
-    return res.json({ token });
+
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: '2h',
+  });
+};
+exports.loginAdmin = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const admin = await Admin.findOne({ email });
+    if (admin && await admin.matchPassword(password)) {
+      res.status(200).json({
+        _id: admin._id,
+        email: admin.email,
+        token: generateToken(admin._id)
+      });
+    } else {
+      res.status(401).json({ message: "Invalid email or password" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
   }
-  res.status(400).json({ error: 'Invalid credentials' });
+};
+
+
+exports.getDashboardData = async (req, res) => {
+  try {
+    res.json({
+      courses: 10,
+      books: 20,
+      users: 5
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
 };
 
 // Add course

@@ -1,0 +1,42 @@
+.main-layout {
+  display: flex;
+  min-height: 100vh;
+}
+.content {
+  flex-grow: 1;
+  padding: 2rem;
+}
+
+/* Sidebar fixed width */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  background-color: #E5E7EB;
+  color: white;
+  transition: left 0.3s ease;
+  z-index: 1000;
+}
+
+/* Content shift */
+.content-wrapper {
+  margin-left: 250px;
+  padding-top: 60px;
+  transition: margin-left 0.3s ease;
+}
+
+/* Small screen এ Sidebar hide করে hamburger menu দেখানো */
+@media (max-width: 768px) {
+  .sidebar {
+    left: -250px; /* hidden */
+  }
+  .sidebar.open {
+    left: 0;
+  }
+  .content-wrapper {
+    margin-left: 0;
+    padding-top: 60px;
+  }
+}

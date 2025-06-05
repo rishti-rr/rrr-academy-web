@@ -13,6 +13,8 @@ import About from "./components/About/About";
 import Services from "./components/Services/Services";
 import AdminLogin from "./components/Admin/AdminLogin";
 import AdminPanel from "./components/admin/AdminPanel";
+import CourseDetails from "./components/Courses/CourseDetails";
+import BookDetails from "./components/Books/BookDetails";
 
 const App = () => {
   const location = useLocation();
@@ -59,6 +61,8 @@ const App = () => {
         <Route path="/services" element={<Services />} /> 
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/course-details/:id" element={<CourseDetails />} />
+        <Route path="/book-details/:id" element={<BookDetails />} />
 
         {/* <Route path="/footer" element={<Footer/> } /> */}
       </Routes>    
