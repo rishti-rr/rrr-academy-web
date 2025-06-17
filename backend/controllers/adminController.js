@@ -3,13 +3,15 @@ const jwt = require('jsonwebtoken');
 const Course = require('../models/Course');
 const Book = require('../models/Book');
 const Admin = require('../models/Admin');
+const User = require('../models/User');
 
-
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+const generateToken = (id, role) => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, {
     expiresIn: '2h',
   });
 };
+
+// Admin Login
 exports.loginAdmin = async (req, res) => {
   const { email, password } = req.body;
 
@@ -19,7 +21,7 @@ exports.loginAdmin = async (req, res) => {
       res.status(200).json({
         _id: admin._id,
         email: admin.email,
-        token: generateToken(admin._id)
+        token: generateToken(admin._id, admin.role)
       });
     } else {
       res.status(401).json({ message: "Invalid email or password" });
@@ -29,7 +31,7 @@ exports.loginAdmin = async (req, res) => {
   }
 };
 
-
+// Dashboard Data
 exports.getDashboardData = async (req, res) => {
   try {
     res.json({

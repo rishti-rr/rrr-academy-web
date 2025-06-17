@@ -188,7 +188,7 @@
 // export default Navbar;
 
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../Login/firebaseConfig";
 import {
@@ -199,6 +199,7 @@ import {
 } from "firebase/auth";
 import { IoClose, IoEye, IoEyeOff } from "react-icons/io5";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { AuthContext } from "../../context/AuthContext";
 
 const NavbarMenu = [
   { id: 1, title: "Home", path: "/" },
@@ -208,7 +209,15 @@ const NavbarMenu = [
 ];
 
 const Navbar = () => {
-  const [showAuthModal, setShowAuthModal] = useState(false);
+  // const [showAuthModal, setShowAuthModal] = useState(false);
+  
+  const {
+    user,
+    setUser,
+    showAuthModal,
+    setShowAuthModal,
+  } = useContext(AuthContext);
+
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -216,16 +225,17 @@ const Navbar = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [user, setUser] = useState(null); // ✅ user state
+  
+  // const [user, setUser] = useState(null); // ✅ user state
   const navigate = useNavigate();
 
   // ✅ Listen to Firebase Auth state
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsub = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
-    return () => unsubscribe();
-  }, []);
+    return () => unsub();
+  }, [setUser]);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -321,7 +331,30 @@ const Navbar = () => {
                 className="w-full lg:w-auto py-2 px-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </li>
-
+            {/* ✅ Protected Links */}
+            {user && (
+              <>
+                <li>
+                  <Link
+                    to="/profile"
+                    className="py-2 px-3 text-green-600 hover:text-green-800"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Profile
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/cart"
+                    className="py-2 px-3 text-green-600 hover:text-green-800"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Cart
+                  </Link>
+                </li>
+              </>
+            )}
+            
             {/* ✅ Show user email or Sign In */}
             {user ? (
               <>

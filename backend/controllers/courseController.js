@@ -3,12 +3,28 @@ const Course = require("../models/Course");
 // Get all courses
 exports.getAllCourses = async (req, res) => {
   try {
-    const courses = await Course.find();
+     const limit = parseInt(req.query.limit) || 0; // 0 means no limit
+    const courses = await Course.find().limit(limit);
     res.json(courses);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+// exports.getAllCourses = async (req, res) => {
+//   try {
+//     const limit = parseInt(req.query.limit);
+//     let query = Course.find();
+
+//     if (limit && limit > 0) {
+//       query = query.limit(limit);
+//     }
+
+//     const courses = await query;
+//     res.json(courses);
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// };
 
 // Get a specific course by ID
 exports.getCourseById = async (req, res) => {
@@ -23,9 +39,9 @@ exports.getCourseById = async (req, res) => {
 
 // Add a new course
 exports.addCourse = async (req, res) => {
-  const { title, description, instructor, rating, img } = req.body;
+  const { title, description, instructor, rating, image } = req.body;
   try {
-    const newCourse = new Course({ title, description, instructor, rating, img });
+    const newCourse = new Course({ title, description, instructor, rating, image });
     await newCourse.save();
     res.status(201).json(newCourse);
   } catch (err) {

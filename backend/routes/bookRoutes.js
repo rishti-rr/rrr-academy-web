@@ -1,11 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const bookController = require("../controllers/bookController");
+const { verifyAdmin } = require("../middleware/authMiddleware");
 
-// Routes
+// Public Routes
 router.get("/", bookController.getAllBooks);
 router.get("/:id", bookController.getBookById);
-router.post("/", bookController.addBook);
-router.delete("/:id", bookController.deleteBook);
+
+// Admin-only Routes
+router.post("/", verifyAdmin, bookController.addBook);
+router.delete("/:id", verifyAdmin, bookController.deleteBook);
 
 module.exports = router;
