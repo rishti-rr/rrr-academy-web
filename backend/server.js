@@ -23,6 +23,8 @@ if (!MONGO_URI) {
   process.exit(1); // Exit if no MongoDB URI is provided
 }
 
+console.log("✅ Starting server...");
+
 mongoose.connect(MONGO_URI)
   .then(() => console.log("✅ Database connected successfully"))
   .catch((err) => console.error("❌ Error connecting to DB:", err));
