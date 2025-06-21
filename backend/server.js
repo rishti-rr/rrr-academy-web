@@ -29,17 +29,17 @@ mongoose.connect(MONGO_URI)
 
 
 // Routes
-// const bookRoutes = require("./routes/bookRoutes");
-// const courseRoutes = require("./routes/courseRoutes");
-// const adminRoutes = require('./routes/adminRoutes');
-// const statsRoutes = require("./routes/stats");
-// const userRoutes = require("./routes/userRoutes");
+const bookRoutes = require("./routes/bookRoutes");
+const courseRoutes = require("./routes/courseRoutes");
+const adminRoutes = require('./routes/adminRoutes');
+const statsRoutes = require("./routes/stats");
+const userRoutes = require("./routes/userRoutes");
 
-app.use("/api/books", bookRoutes);
-app.use("/api/courses", courseRoutes);
-app.use('/api/admin', adminRoutes);
-app.use("/api/stats", statsRoutes); 
-app.use("/api/users", userRoutes);
+// app.use("/api/books", bookRoutes);
+// app.use("/api/courses", courseRoutes);
+// app.use('/api/admin', adminRoutes);
+// app.use("/api/stats", statsRoutes); 
+// app.use("/api/users", userRoutes);
 
 // Server Start
 const PORT = process.env.PORT || 5000;
