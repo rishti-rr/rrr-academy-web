@@ -24,6 +24,11 @@ mongoose.connect(MONGO_URI)
   .then(() => console.log("✅ Database connected successfully"))
   .catch((err) => console.error("❌ Error connecting to DB:", err));
 
+  // ✅ Health check route (for Railway or browser testing)
+app.get('/', (req, res) => {
+  res.send('🚀 RRR Academy backend is live!');
+});
+
 // Routes
 const bookRoutes = require("./routes/bookRoutes");
 const courseRoutes = require("./routes/courseRoutes");
