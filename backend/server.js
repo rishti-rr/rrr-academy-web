@@ -5,16 +5,19 @@ const cors = require("cors");
 
 // Load environment variables
 dotenv.config();
-
 const app = express();
 
 // Middleware
 app.use(express.json());
 app.use(cors());
 
+// ✅ Health check route (for Railway or browser testing)
+app.get('/', (req, res) => {
+  res.send('RRR Academy backend is live!');
+});
+
 // MongoDB Atlas Connection
 const MONGO_URI = process.env.MONGO_URI;
-
 if (!MONGO_URI) {
   console.error("❌ MONGO_URI is missing in .env file!");
   process.exit(1); // Exit if no MongoDB URI is provided
@@ -24,17 +27,13 @@ mongoose.connect(MONGO_URI)
   .then(() => console.log("✅ Database connected successfully"))
   .catch((err) => console.error("❌ Error connecting to DB:", err));
 
-  // ✅ Health check route (for Railway or browser testing)
-app.get('/', (req, res) => {
-  res.send('RRR Academy backend is live!');
-});
 
 // Routes
-const bookRoutes = require("./routes/bookRoutes");
-const courseRoutes = require("./routes/courseRoutes");
-const adminRoutes = require('./routes/adminRoutes');
-const statsRoutes = require("./routes/stats");
-const userRoutes = require("./routes/userRoutes");
+// const bookRoutes = require("./routes/bookRoutes");
+// const courseRoutes = require("./routes/courseRoutes");
+// const adminRoutes = require('./routes/adminRoutes');
+// const statsRoutes = require("./routes/stats");
+// const userRoutes = require("./routes/userRoutes");
 
 app.use("/api/books", bookRoutes);
 app.use("/api/courses", courseRoutes);
