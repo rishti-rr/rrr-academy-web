@@ -25,9 +25,21 @@ if (!MONGO_URI) {
 
 // console.log("✅ Starting server...");
 
+// mongoose.connect(MONGO_URI)
+//   .then(() => console.log("Database connected successfully"))
+//   .catch((err) => console.error("Error connecting to DB:", err));
+
 mongoose.connect(MONGO_URI)
   .then(() => console.log("✅ Database connected successfully"))
-  .catch((err) => console.error("❌ Error connecting to DB:", err));
+  .catch((err) => {
+    console.error("❌ Error connecting to DB:", err);
+    process.exit(1);  // Crash server on DB fail to avoid undefined behavior
+  });
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection:', reason);
+  // optionally close server or exit process
+});
 
 
 // Routes
@@ -53,5 +65,5 @@ app.use((req, res, next) => {
 // Server Start
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
