@@ -23,7 +23,7 @@ if (!MONGO_URI) {
   process.exit(1); // Exit if no MongoDB URI is provided
 }
 
-console.log("✅ Starting server...");
+// console.log("✅ Starting server...");
 
 mongoose.connect(MONGO_URI)
   .then(() => console.log("✅ Database connected successfully"))
@@ -36,12 +36,14 @@ const courseRoutes = require("./routes/courseRoutes");
 const adminRoutes = require('./routes/adminRoutes');
 const statsRoutes = require("./routes/statsRoutes");
 const userRoutes = require("./routes/userRoutes");
+const cartRoutes = require("./routes/cartRoutes");
 
 app.use("/api/books", bookRoutes);
 app.use("/api/courses", courseRoutes);
 app.use('/api/admin', adminRoutes);
 app.use("/api/stats", statsRoutes); 
 app.use("/api/users", userRoutes);
+app.use("/api/cart", cartRoutes);
 
 // ✅ Then add the 404 fallback route
 app.use((req, res, next) => {
