@@ -26,7 +26,7 @@ mongoose.connect(MONGO_URI)
 
   // ✅ Health check route (for Railway or browser testing)
 app.get('/', (req, res) => {
-  res.send('🚀 RRR Academy backend is live!');
+  res.send('RRR Academy backend is live!');
 });
 
 // Routes
