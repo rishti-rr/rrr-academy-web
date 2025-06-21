@@ -41,6 +41,11 @@ app.use('/api/admin', adminRoutes);
 app.use("/api/stats", statsRoutes); 
 app.use("/api/users", userRoutes);
 
+// ✅ Then add the 404 fallback route
+app.use((req, res, next) => {
+  res.status(404).send("Route not found");
+});
+
 // Server Start
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
