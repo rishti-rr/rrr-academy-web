@@ -97,25 +97,109 @@
 
 
 
+// import React, { useEffect, useState, useContext } from "react";
+// import { useNavigate } from "react-router-dom";
+// import { AuthContext } from "../../context/AuthContext";
+// import {useCart } from "../../context/CartContext";
+
+// const Courses = () => {
+//   const navigate = useNavigate();
+//   const [courses, setCourses] = useState([]);
+//   const [loading, setLoading] = useState(true); 
+//   const { user, setShowAuthModal } = useContext(AuthContext);
+//   const { addToCart } = useCart();
+
+// const handleAddToCart = (item) => {
+//   if (!user) {
+//     setShowAuthModal(true); // trigger login modal
+//   } else {
+//     addToCart(item); // add to cart context or backend
+//   }
+// };
+
+//   useEffect(() => {
+//     const fetchCourses = async () => {
+//       try {
+//         const res = await fetch("http://localhost:5000/api/courses?limit=4");
+//         const data = await res.json();
+//         setCourses(data);
+//       } catch (err) {
+//         console.error("Error fetching courses:", err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     fetchCourses();
+//   }, []);
+
+//   if (loading) return <p className="text-center mt-10">Loading courses...</p>;
+
+//   return (
+//     <div className="mb-12">
+//       <div className="container">
+//         <div className="text-center mb-10 max-w-[600px] mx-auto">
+//           <p className="text-sm text-primary pt-10">Trending topics</p>
+//           <h1 className="text-3xl font-bold">Courses</h1>
+//         </div>
+
+//         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 place-items-center gap-6">
+//           {courses.map(({ _id, image, title, instructor, rating, description }) => (
+//               <div
+//                 key={_id}
+//                 className="bg-white shadow-md rounded-lg p-4 text-center cursor-pointer hover:shadow-lg transition"
+//                 onClick={() => handleCourseClick(_id)}
+//               >
+//                 <img
+//                   src={image}
+//                   alt={title}
+//                   className="w-full h-[200px] object-cover rounded-md mb-3"
+//                 />
+//                 <h3 className="text-lg font-semibold">{title}</h3>
+//                 <p className="text-sm text-gray-700">{instructor}</p>
+//                 <p className="text-xs text-gray-500 mb-2 line-clamp-2">{description}</p>
+//                 <div className="flex items-center gap-1 justify-center text-yellow-500">
+//                   <span>&#9733;</span>
+//                   <span>{rating.toFixed(1)}</span>
+//                 </div>
+//                 <button
+//                 className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+//                 onClick={() => handleAddToCart(item)} // item = course or book
+//                 >
+//                  Add to Cart
+//                 </button>
+
+//               </div>
+//             ))}
+//         </div>
+
+//         <div className="flex justify-center">
+//           <button
+//             className="mt-10 bg-primary text-white py-2 px-6 rounded-md hover:bg-primary-dark transition"
+//             onClick={() => navigate("/all-courses")}
+//           >
+//             View All Courses
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Courses;
+
+
+
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import {useCart } from "../../context/CartContext";
+import { useCart } from "../../context/CartContext";
 
 const Courses = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const { user, setShowAuthModal } = useContext(AuthContext);
   const { addToCart } = useCart();
-
-const handleAddToCart = (item) => {
-  if (!user) {
-    setShowAuthModal(true); // trigger login modal
-  } else {
-    addToCart(item); // add to cart context or backend
-  }
-};
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -132,6 +216,18 @@ const handleAddToCart = (item) => {
     fetchCourses();
   }, []);
 
+  const handleAddToCart = (course) => {
+    if (!user) {
+      setShowAuthModal(true);
+    } else {
+      addToCart({ ...course, type: "course" });
+    }
+  };
+
+  const handleCourseClick = (id) => {
+    navigate(`/course-details/${id}`);
+  };
+
   if (loading) return <p className="text-center mt-10">Loading courses...</p>;
 
   return (
@@ -143,33 +239,35 @@ const handleAddToCart = (item) => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 place-items-center gap-6">
-          {courses.map(({ _id, image, title, instructor, rating, description }) => (
-              <div
-                key={_id}
-                className="bg-white shadow-md rounded-lg p-4 text-center cursor-pointer hover:shadow-lg transition"
-                onClick={() => handleCourseClick(_id)}
-              >
-                <img
-                  src={image}
-                  alt={title}
-                  className="w-full h-[200px] object-cover rounded-md mb-3"
-                />
-                <h3 className="text-lg font-semibold">{title}</h3>
-                <p className="text-sm text-gray-700">{instructor}</p>
-                <p className="text-xs text-gray-500 mb-2 line-clamp-2">{description}</p>
-                <div className="flex items-center gap-1 justify-center text-yellow-500">
-                  <span>&#9733;</span>
-                  <span>{rating.toFixed(1)}</span>
-                </div>
-                <button
-                className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                onClick={() => handleAddToCart(item)} // item = course or book
-                >
-                 Add to Cart
-                </button>
-
+          {courses.map((course) => (
+            <div
+              key={course._id}
+              className="bg-white shadow-md rounded-lg p-4 text-center cursor-pointer hover:shadow-lg transition"
+              onClick={() => handleCourseClick(course._id)}
+            >
+              <img
+                src={course.image}
+                alt={course.title}
+                className="w-full h-[200px] object-cover rounded-md mb-3"
+              />
+              <h3 className="text-lg font-semibold">{course.title}</h3>
+              <p className="text-sm text-gray-700">{course.instructor}</p>
+              <p className="text-xs text-gray-500 mb-2 line-clamp-2">{course.description}</p>
+              <div className="flex items-center gap-1 justify-center text-yellow-500">
+                <span>&#9733;</span>
+                <span>{course.rating?.toFixed(1)}</span>
               </div>
-            ))}
+              <button
+                className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent navigate on button click
+                  handleAddToCart(course);
+                }}
+              >
+                Add to Cart
+              </button>
+            </div>
+          ))}
         </div>
 
         <div className="flex justify-center">

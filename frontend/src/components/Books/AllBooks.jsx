@@ -117,16 +117,205 @@
 
 
 
+// import React, { useEffect, useState } from "react";
+// import { useNavigate } from "react-router-dom";
+
+// const AllBooks = () => {
+//   const [books, setBooks] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const navigate = useNavigate();
+
+//   useEffect(() => {
+//     fetch("http://localhost:5000/api/books") // adjust API route accordingly
+//       .then((res) => res.json())
+//       .then((data) => {
+//         setBooks(data);
+//         setLoading(false);
+//       })
+//       .catch((err) => {
+//         console.error("Error fetching books:", err);
+//         setLoading(false);
+//       });
+//   }, []);
+
+//   const handleBookClick = (id) => {
+//     navigate(`/book-details/${id}`);
+//   };
+
+//   if (loading) return <p className="text-center mt-10">Loading books...</p>;
+
+//   return (
+//     <div className="mt-14 mb-12">
+//       <div className="container mx-auto px-4">
+//         <div className="text-center mb-10 max-w-[600px] mx-auto">
+//           <h1 className="text-3xl font-bold">All Books</h1>
+//           <p className="text-xs text-gray-400">
+//             Explore all available books in our collection.
+//           </p>
+//         </div>
+
+//         {books.length === 0 ? (
+//           <p className="text-center text-gray-500">No books found.</p>
+//         ) : (
+//           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+//             {books.map(({ _id, image, title, author, rating, description }) => (
+//               <div
+//                 key={_id}
+//                 className="bg-white shadow-md rounded-lg p-4 text-center cursor-pointer hover:shadow-lg transition"
+//                 onClick={() => handleBookClick(_id)}
+//               >
+//                 <img
+//                   src={image}
+//                   alt={title}
+//                   className="w-full h-[200px] object-cover rounded-md mb-3"
+//                 />
+//                 <h3 className="text-lg font-semibold">{title}</h3>
+//                 <p className="text-sm text-gray-700">{author}</p>
+//                 <p className="text-xs text-gray-500 mb-2 line-clamp-2">{description}</p>
+//                 <div className="flex items-center gap-1 justify-center text-yellow-500">
+//                   <span>&#9733;</span>
+//                   <span>{rating.toFixed(1)}</span>
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         )}
+
+//         <div className="flex justify-center mt-6">
+//           <button
+//             className="bg-gray-700 text-white px-6 py-2 rounded-md hover:bg-gray-900 transition"
+//             onClick={() => navigate("/")}
+//           >
+//             Go Back
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AllBooks;
+
+// import React, { useEffect, useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import { useAuth } from "../../context/AuthContext";
+// import { useCart } from "../../context/CartContext";
+
+// const AllBooks = () => {
+//   const [books, setBooks] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const navigate = useNavigate();
+//   const { user, setShowAuthModal } = useAuth();
+//   const { addToCart } = useCart();
+
+//   const handleAddToCart = (book) => {
+//     if (!user) {
+//       setShowAuthModal(true);
+//     } else {
+//       addToCart({ ...book, type: "book" });
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetch("http://localhost:5000/api/books")
+//       .then((res) => res.json())
+//       .then((data) => {
+//         setBooks(data);
+//         setLoading(false);
+//       })
+//       .catch((err) => {
+//         console.error("Error fetching books:", err);
+//         setLoading(false);
+//       });
+//   }, []);
+
+//   const handleBookClick = (id) => {
+//     navigate(`/book-details/${id}`);
+//   };
+
+//   if (loading) return <p className="text-center mt-10">Loading books...</p>;
+
+//   return (
+//     <div className="mt-14 mb-12">
+//       <div className="container mx-auto px-4">
+//         <div className="text-center mb-10 max-w-[600px] mx-auto">
+//           <h1 className="text-3xl font-bold">All Books</h1>
+//           <p className="text-xs text-gray-400">Explore all available books.</p>
+//         </div>
+
+//         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+//           {books.map(({ _id, image, title, author, rating, description }) => (
+//             <div
+//               key={_id}
+//               className="bg-white shadow-md rounded-lg p-4 text-center cursor-pointer hover:shadow-lg transition"
+//               onClick={() => handleBookClick(_id)}
+//             >
+//               <img
+//                 src={image}
+//                 alt={title}
+//                 className="w-full h-[200px] object-cover rounded-md mb-3"
+//               />
+//               <h3 className="text-lg font-semibold">{title}</h3>
+//               <p className="text-sm text-gray-700">{author}</p>
+//               <p className="text-xs text-gray-500 mb-2 line-clamp-2">{description}</p>
+//               <div className="flex items-center gap-1 justify-center text-yellow-500">
+//                 <span>&#9733;</span>
+//                 <span>{rating.toFixed(1)}</span>
+//               </div>
+//               <button
+//                 className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+//                 onClick={(e) => {
+//                   e.stopPropagation();
+//                   handleAddToCart({ _id, image, title, author, rating, description });
+//                 }}
+//               >
+//                 Add to Cart
+//               </button>
+//             </div>
+//           ))}
+//         </div>
+
+//         <div className="flex justify-center mt-6">
+//           <button
+//             className="bg-gray-700 text-white px-6 py-2 rounded-md hover:bg-gray-900 transition"
+//             onClick={() => navigate("/")}
+//           >
+//             Go Back
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AllBooks;
+
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { useCart } from "../../context/CartContext";
+// import { toast } from "react-toastify"; // ✅ Import toast
+import "react-toastify/dist/ReactToastify.css";
 
 const AllBooks = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { user, setShowAuthModal } = useAuth();
+  const { addToCart } = useCart();
+
+  const handleAddToCart = (book) => {
+    if (!user) {
+      setShowAuthModal(true);
+    } else {
+      addToCart(book, "book" );
+      // toast.success("Book added to cart!", { position: "bottom-right" }); // ✅ Toast
+    }
+  };
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/books") // adjust API route accordingly
+    fetch("http://localhost:5000/api/books")
       .then((res) => res.json())
       .then((data) => {
         setBooks(data);
@@ -149,37 +338,40 @@ const AllBooks = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-10 max-w-[600px] mx-auto">
           <h1 className="text-3xl font-bold">All Books</h1>
-          <p className="text-xs text-gray-400">
-            Explore all available books in our collection.
-          </p>
+          <p className="text-xs text-gray-400">Explore all available books.</p>
         </div>
 
-        {books.length === 0 ? (
-          <p className="text-center text-gray-500">No books found.</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {books.map(({ _id, image, title, author, rating, description }) => (
-              <div
-                key={_id}
-                className="bg-white shadow-md rounded-lg p-4 text-center cursor-pointer hover:shadow-lg transition"
-                onClick={() => handleBookClick(_id)}
-              >
-                <img
-                  src={image}
-                  alt={title}
-                  className="w-full h-[200px] object-cover rounded-md mb-3"
-                />
-                <h3 className="text-lg font-semibold">{title}</h3>
-                <p className="text-sm text-gray-700">{author}</p>
-                <p className="text-xs text-gray-500 mb-2 line-clamp-2">{description}</p>
-                <div className="flex items-center gap-1 justify-center text-yellow-500">
-                  <span>&#9733;</span>
-                  <span>{rating.toFixed(1)}</span>
-                </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {books.map((book) => (
+            <div
+              key={book._id}
+              className="bg-white shadow-md rounded-lg p-4 text-center cursor-pointer hover:shadow-lg transition"
+              onClick={() => handleBookClick(book._id)}
+            >
+              <img
+                src={book.image}
+                alt={book.title}
+                className="w-full h-[200px] object-cover rounded-md mb-3"
+              />
+              <h3 className="text-lg font-semibold">{book.title}</h3>
+              <p className="text-sm text-gray-700">{book.author}</p>
+              <p className="text-xs text-gray-500 mb-2 line-clamp-2">{book.description}</p>
+              <div className="flex items-center gap-1 justify-center text-yellow-500">
+                <span>&#9733;</span>
+                <span>{book.rating.toFixed(1)}</span>
               </div>
-            ))}
-          </div>
-        )}
+              <button
+                className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAddToCart(book);
+                }}
+              >
+                Add to Cart
+              </button>
+            </div>
+          ))}
+        </div>
 
         <div className="flex justify-center mt-6">
           <button

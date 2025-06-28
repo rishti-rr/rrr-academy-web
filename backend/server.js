@@ -41,21 +41,23 @@ process.on('unhandledRejection', (reason, promise) => {
   // optionally close server or exit process
 });
 
+const firebaseUserRoutes = require('./routes/firebaseUserRoutes');
+app.use("/api/firebase-users", firebaseUserRoutes);
 
 // Routes
 const bookRoutes = require("./routes/bookRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const adminRoutes = require('./routes/adminRoutes');
-const statsRoutes = require("./routes/statsRoutes");
-const userRoutes = require("./routes/userRoutes");
+// const userRoutes = require("./routes/userRoutes");
 const cartRoutes = require("./routes/cartRoutes");
+const orderRoutes = require("./routes/orders");
 
 app.use("/api/books", bookRoutes);
 app.use("/api/courses", courseRoutes);
 app.use('/api/admin', adminRoutes);
-app.use("/api/stats", statsRoutes); 
-app.use("/api/users", userRoutes);
+// app.use("/api/users", userRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/orders", orderRoutes);
 
 // ✅ Then add the 404 fallback route
 app.use((req, res, next) => {

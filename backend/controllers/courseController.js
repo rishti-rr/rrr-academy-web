@@ -10,21 +10,7 @@ exports.getAllCourses = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-// exports.getAllCourses = async (req, res) => {
-//   try {
-//     const limit = parseInt(req.query.limit);
-//     let query = Course.find();
 
-//     if (limit && limit > 0) {
-//       query = query.limit(limit);
-//     }
-
-//     const courses = await query;
-//     res.json(courses);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
 
 // Get a specific course by ID
 exports.getCourseById = async (req, res) => {
@@ -44,6 +30,21 @@ exports.addCourse = async (req, res) => {
     const newCourse = new Course({ title, description, instructor, rating, image });
     await newCourse.save();
     res.status(201).json(newCourse);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+// Update a course by ID
+exports.updateCourse = async (req, res) => {
+  try {
+    const updatedCourse = await Course.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!updatedCourse) return res.status(404).json({ message: "Course not found" });
+    res.json(updatedCourse);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

@@ -2,6 +2,6 @@
 .env
 backend/.env
 backend/config/firebase-key.json
-backend/config/firebase.js
+backend/config/firebaseAdmin.js
 
 frontend/src/components/Login/firebaseConfig.js

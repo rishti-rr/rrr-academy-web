@@ -1,12 +1,12 @@
 // src/components/ProtectedRoute.jsx
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { auth } from "../components/Login/firebaseConfig";
+import { useAuth } from "../context/AuthContext";
 
 const ProtectedRoute = ({ children }) => {
-  const user = auth.currentUser;
+  const { user } = useAuth(); // ✅ reactive auth context
 
-  return user ? children : <Navigate to="/" />;
+  return user ? children : <Navigate to="/auth" />;
 };
 
 export default ProtectedRoute;

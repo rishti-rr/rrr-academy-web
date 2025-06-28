@@ -98,14 +98,92 @@
 
 // export default Books;
 
-import React, { useEffect, useState } from "react";
+
+
+// import React, { useEffect, useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import { FaStar } from "react-icons/fa6";
+
+// const Books = () => {
+//   const navigate = useNavigate();
+//   const [books, setBooks] = useState([]);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     const fetchBooks = async () => {
+//       try {
+//         const res = await fetch("http://localhost:5000/api/books?limit=4");
+//         const data = await res.json();
+//         setBooks(data);
+//       } catch (err) {
+//         console.error("Error fetching books:", err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     fetchBooks();
+//   }, []);
+
+//   if (loading) return <p className="text-center mt-10">Loading books...</p>;
+
+//   return (
+//     <div className="mt-14 mb-12">
+//       <div className="container">
+//         <div className="text-center mb-10 max-w-[600px] mx-auto">
+//           <p className="text-sm bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+//             Top Books for you
+//           </p>
+//           <h1 className="text-3xl font-bold">Top Books</h1>
+//         </div>
+
+//         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 place-items-center gap-6">
+//           {books.map(({ _id, image, title, author, rating }) => (
+//             <div key={_id} className="space-y-3 text-center">
+//               <img
+//                 src={image}
+//                 alt={title}
+//                 className="h-[220px] w-[150px] object-cover rounded-lg shadow-md hover:scale-105 transition"
+//               />
+//               <h3 className="font-semibold text-lg">{title}</h3>
+//               <p className="text-sm text-gray-700">{author}</p>
+//               <div className="flex justify-center items-center gap-1 text-yellow-500">
+//                 <FaStar />
+//                 <span className="text-sm text-black">{rating}</span>
+//               </div>
+//             </div>
+//           ))}
+//         </div>
+
+//         <div className="flex justify-center">
+//           <button
+//             className="mt-10 bg-primary text-white py-2 px-6 rounded-md hover:bg-primary-dark transition"
+//             onClick={() => navigate("/all-books")}
+//           >
+//             View All Books
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Books;
+
+
+
+
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaStar } from "react-icons/fa6";
+import { useCart } from "../../context/CartContext";
+import { AuthContext } from "../../context/AuthContext";
 
 const Books = () => {
   const navigate = useNavigate();
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
+  const { user, setShowAuthModal } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -122,6 +200,14 @@ const Books = () => {
     fetchBooks();
   }, []);
 
+  const handleAddToCart = (book) => {
+    if (!user) {
+      setShowAuthModal(true);
+    } else {
+      addToCart({ ...book, type: "book" });
+    }
+  };
+
   if (loading) return <p className="text-center mt-10">Loading books...</p>;
 
   return (
@@ -135,19 +221,25 @@ const Books = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 place-items-center gap-6">
-          {books.map(({ _id, image, title, author, rating }) => (
-            <div key={_id} className="space-y-3 text-center">
+          {books.map((book) => (
+            <div key={book._id} className="space-y-3 text-center bg-white p-4 rounded-lg shadow-md">
               <img
-                src={image}
-                alt={title}
-                className="h-[220px] w-[150px] object-cover rounded-lg shadow-md hover:scale-105 transition"
+                src={book.image}
+                alt={book.title}
+                className="h-[220px] w-[150px] object-cover rounded-lg shadow hover:scale-105 transition"
               />
-              <h3 className="font-semibold text-lg">{title}</h3>
-              <p className="text-sm text-gray-700">{author}</p>
+              <h3 className="font-semibold text-lg">{book.title}</h3>
+              <p className="text-sm text-gray-700">{book.author}</p>
               <div className="flex justify-center items-center gap-1 text-yellow-500">
                 <FaStar />
-                <span className="text-sm text-black">{rating}</span>
+                <span className="text-sm text-black">{book.rating}</span>
               </div>
+              <button
+                className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                onClick={() => handleAddToCart(book)}
+              >
+                Add to Cart
+              </button>
             </div>
           ))}
         </div>

@@ -10,5 +10,6 @@ router.get("/:id", bookController.getBookById);
 // Admin-only Routes
 router.post("/", verifyAdmin, bookController.addBook);
 router.delete("/:id", verifyAdmin, bookController.deleteBook);
+router.put("/:id", verifyAdmin, bookController.updateBook);
 
 module.exports = router;
