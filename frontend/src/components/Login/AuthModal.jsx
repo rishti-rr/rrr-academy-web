@@ -1,130 +1,117 @@
-// import React, { useState } from "react";
-// import { useForm } from "react-hook-form";
-// import { auth } from "../Login/firebaseConfig";
-// import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-
-// const AuthModal = ({ setShowAuthModal }) => {
-//   const { register, handleSubmit, formState: { errors } } = useForm();
-//   const [isSignUp, setIsSignUp] = useState(false);
-//   const [errorMessage, setErrorMessage] = useState("");
-
-//   const onSubmit = async (data) => {
-//     try {
-//       if (isSignUp) {
-//         await createUserWithEmailAndPassword(auth, data.email, data.password);
-//         alert("Sign-Up Successful");
-//       } else {
-//         await signInWithEmailAndPassword(auth, data.email, data.password);
-//         alert("Sign-In Successful");
-//       }
-//       setShowAuthModal(false);
-//     } catch (error) {
-//       setErrorMessage(error.message);
-//     }
-//   };
-
-//   return (
-//     <div className="fixed inset-0 bg-gray-500 bg-opacity-50 z-50 flex items-center justify-center">
-//       <div className="bg-white rounded-md p-6 max-w-md w-full shadow-lg">
-//         <h2 className="text-2xl font-bold mb-4 text-center">
-//           {isSignUp ? "Sign Up" : "Sign In"}
-//         </h2>
-//         {errorMessage && <p className="text-red-500 text-sm text-center">{errorMessage}</p>}
-//         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-//           <div>
-//             <label>Email</label>
-//             <input
-//               type="email"
-//               className="w-full p-2 border border-gray-300 rounded-md"
-//               {...register("email", { required: "Email is required" })}
-//             />
-//             {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-//           </div>
-//           <div>
-//             <label>Password</label>
-//             <input
-//               type="password"
-//               className="w-full p-2 border border-gray-300 rounded-md"
-//               {...register("password", {
-//                 required: "Password is required",
-//                 minLength: { value: 6, message: "Password must be at least 6 characters" }
-//               })}
-//             />
-//             {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
-//           </div>
-//           <button type="submit" className="primary-btn w-full">
-//             {isSignUp ? "Sign Up" : "Sign In"}
-//           </button>
-//         </form>
-//         <p className="text-center mt-4">
-//           {isSignUp ? "Already have an account?" : "Don't have an account?"} 
-//           <button
-//             className="text-blue-500 ml-1"
-//             onClick={() => setIsSignUp(!isSignUp)}
-//           >
-//             {isSignUp ? "Sign In" : "Sign Up"}
-//           </button>
-//         </p>
-//         <div className="mt-4 text-center">
-//           <button
-//             type="button"
-//             className="text-gray-500"
-//             onClick={() => setShowAuthModal(false)}
-//           >
-//             Close
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default AuthModal;
-
-
-
-
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { auth } from "../Login/firebaseConfig";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { sendOtpEmail } from "../../utils/emailjs"; // ✅ import emailjs helper
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPhoneNumber,
+  RecaptchaVerifier,
+} from "firebase/auth";
+import { sendOtpEmail } from "../../utils/emailjs";
 
 const AuthModal = ({ setShowAuthModal }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const [isSignUp, setIsSignUp] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [generatedOtp, setGeneratedOtp] = useState("");
   const [enteredOtp, setEnteredOtp] = useState("");
   const [formData, setFormData] = useState(null);
+  const [authMode, setAuthMode] = useState("email"); // "email" or "phone"
+  const [phone, setPhone] = useState("");
+  const [phoneOtp, setPhoneOtp] = useState("");
+  const [phoneOtpSent, setPhoneOtpSent] = useState(false);
+  const [confirmationResult, setConfirmationResult] = useState(null);
+  const recaptchaRef = useRef(null);
 
+  // Validate Bangladeshi phone number: +8801XXXXXXXXX or 01XXXXXXXXX
+  const isValidBangladeshiPhone = (number) => {
+    return /^((\+8801|01)[3-9]\d{8})$/.test(number);
+  };
+
+  // --- SIGN UP: require both email and phone, send OTP to phone, create account after OTP verification ---
   const handleSignupOtpSend = async (data) => {
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    setGeneratedOtp(otp);
+    setErrorMessage("");
+    if (!isValidBangladeshiPhone(data.phone)) {
+      setErrorMessage("Enter a valid Bangladeshi phone number (e.g. +8801XXXXXXXXX or 01XXXXXXXXX)");
+      return;
+    }
+    let formattedPhone = data.phone;
+    if (data.phone.startsWith("01")) {
+      formattedPhone = "+88" + data.phone;
+    }
     setFormData(data);
-
-    const result = await sendOtpEmail(data.email, otp);
-    if (result.success) {
-      setOtpSent(true);
+    setupRecaptcha();
+    try {
+      const appVerifier = window.recaptchaVerifier;
+      const confirmation = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
+      setConfirmationResult(confirmation);
+      setPhoneOtpSent(true);
       setErrorMessage("");
-    } else {
-      setErrorMessage("❌ Failed to send OTP. Try again.");
+    } catch (err) {
+      setErrorMessage("Failed to send OTP: " + err.message);
     }
   };
 
   const handleOtpVerifyAndSignup = async () => {
-    if (enteredOtp === generatedOtp) {
-      try {
-        await createUserWithEmailAndPassword(auth, formData.email, formData.password);
-        alert("✅ Account created!");
-        setShowAuthModal(false);
-        resetStates();
-      } catch (error) {
-        setErrorMessage(error.message);
-      }
-    } else {
-      setErrorMessage("❌ Incorrect OTP. Try again.");
+    setErrorMessage("");
+    if (!confirmationResult) return;
+    try {
+      await confirmationResult.confirm(phoneOtp);
+      await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+      alert("✅ Account created!");
+      setShowAuthModal(false);
+      resetStates();
+    } catch (err) {
+      setErrorMessage("Invalid OTP or account creation failed: " + err.message);
+    }
+  };
+
+  const setupRecaptcha = () => {
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(
+        recaptchaRef.current,
+        {
+          size: "invisible",
+          callback: () => {},
+        },
+        auth
+      );
+    }
+  };
+
+  const handleSendPhoneOtp = async () => {
+    setErrorMessage("");
+    if (!isValidBangladeshiPhone(phone)) {
+      setErrorMessage("Enter a valid Bangladeshi phone number (e.g. +8801XXXXXXXXX or 01XXXXXXXXX)");
+      return;
+    }
+    // Always send as +880 format for Firebase
+    let formattedPhone = phone;
+    if (phone.startsWith("01")) {
+      formattedPhone = "+88" + phone;
+    }
+    setupRecaptcha();
+    try {
+      const appVerifier = window.recaptchaVerifier;
+      const confirmation = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
+      setConfirmationResult(confirmation);
+      setPhoneOtpSent(true);
+    } catch (err) {
+      setErrorMessage("Failed to send OTP: " + err.message);
+    }
+  };
+
+  const handleVerifyPhoneOtp = async () => {
+    setErrorMessage("");
+    if (!confirmationResult) return;
+    try {
+      await confirmationResult.confirm(phoneOtp);
+      alert("✅ Phone sign-in successful!");
+      setShowAuthModal(false);
+      resetStates();
+    } catch (err) {
+      setErrorMessage("Invalid OTP: " + err.message);
     }
   };
 
@@ -135,109 +122,211 @@ const AuthModal = ({ setShowAuthModal }) => {
     setGeneratedOtp("");
     setEnteredOtp("");
     setFormData(null);
+    setAuthMode("email");
+    setPhone("");
+    setPhoneOtp("");
+    setPhoneOtpSent(false);
+    setConfirmationResult(null);
+    reset();
   };
 
   const onSubmit = async (data) => {
-    if (isSignUp) {
-      handleSignupOtpSend(data);
-    } else {
-      try {
-        await signInWithEmailAndPassword(auth, data.email, data.password);
-        alert("✅ Sign-In Successful!");
-        setShowAuthModal(false);
-        resetStates();
-      } catch (error) {
-        setErrorMessage(error.message);
+    if (authMode === "email") {
+      if (isSignUp) {
+        handleSignupOtpSend(data);
+      } else {
+        try {
+          await signInWithEmailAndPassword(auth, data.email, data.password);
+          alert("✅ Sign-In Successful!");
+          setShowAuthModal(false);
+          resetStates();
+        } catch (error) {
+          setErrorMessage(error.message);
+        }
       }
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-4">{isSignUp ? "Sign Up" : "Sign In"}</h2>
-
+    <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
+      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative animate-fadeIn">
+        <button
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition"
+          onClick={() => {
+            setShowAuthModal(false);
+            resetStates();
+          }}
+          aria-label="Close"
+        >
+          &times;
+        </button>
+        <div className="flex justify-center mb-6 gap-2">
+          <button
+            className={`flex-1 py-2 rounded-l-lg font-semibold transition-all duration-200 ${authMode === "email" ? "bg-blue-600 text-white shadow" : "bg-gray-100 text-gray-700"}`}
+            onClick={() => setAuthMode("email")}
+          >
+            Email
+          </button>
+          <button
+            className={`flex-1 py-2 rounded-r-lg font-semibold transition-all duration-200 ${authMode === "phone" ? "bg-blue-600 text-white shadow" : "bg-gray-100 text-gray-700"}`}
+            onClick={() => setAuthMode("phone")}
+          >
+            Phone
+          </button>
+        </div>
+        <h2 className="text-3xl font-bold text-center mb-6 tracking-tight text-blue-700 drop-shadow">{isSignUp ? "Sign Up" : "Sign In"}</h2>
         {errorMessage && (
-          <p className="text-red-500 text-sm text-center mb-2">{errorMessage}</p>
+          <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-center text-sm font-medium border border-red-200">{errorMessage}</div>
         )}
-
-        {!otpSent ? (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-              <label>Email</label>
+        {isSignUp ? (
+          !phoneOtpSent ? (
+            <form onSubmit={handleSubmit(handleSignupOtpSend)} className="space-y-5">
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">Email</label>
+                <input
+                  type="email"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                  {...register("email", { required: "Email is required" })}
+                />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+              </div>
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">Password</label>
+                <input
+                  type="password"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: { value: 6, message: "Minimum 6 characters" },
+                  })}
+                />
+                {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+              </div>
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">Bangladeshi Phone</label>
+                <input
+                  type="text"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                  {...register("phone", { required: "Phone is required" })}
+                />
+                {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>}
+              </div>
+              <div ref={recaptchaRef} id="recaptcha-container" />
+              <button type="submit" className="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg shadow transition">
+                Send OTP
+              </button>
+            </form>
+          ) : (
+            <div className="space-y-5">
               <input
-                type="email"
-                className="w-full p-2 border rounded"
-                {...register("email", { required: "Email is required" })}
+                type="text"
+                placeholder="Enter OTP"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                value={phoneOtp}
+                onChange={e => setPhoneOtp(e.target.value)}
               />
-              {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+              <button
+                onClick={handleOtpVerifyAndSignup}
+                className="w-full py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white font-semibold text-lg shadow transition"
+              >
+                Verify & Create Account
+              </button>
+              <button
+                onClick={() => {
+                  setPhoneOtpSent(false);
+                  setPhoneOtp("");
+                }}
+                className="w-full text-blue-600 hover:underline text-sm"
+              >
+                🔁 Resend OTP
+              </button>
             </div>
-            <div>
-              <label>Password</label>
-              <input
-                type="password"
-                className="w-full p-2 border rounded"
-                {...register("password", {
-                  required: "Password is required",
-                  minLength: { value: 6, message: "Minimum 6 characters" },
-                })}
-              />
-              {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
-            </div>
-            <button type="submit" className="bg-blue-600 text-white py-2 w-full rounded hover:bg-blue-700 transition">
-              {isSignUp ? "Send OTP" : "Sign In"}
-            </button>
-          </form>
+          )
         ) : (
-          <div className="space-y-4">
-            <p className="text-green-600 text-sm text-center">📩 OTP sent to {formData.email}</p>
-            <input
-              type="text"
-              placeholder="Enter OTP"
-              className="w-full p-2 border rounded"
-              value={enteredOtp}
-              onChange={(e) => setEnteredOtp(e.target.value)}
-            />
-            <button
-              onClick={handleOtpVerifyAndSignup}
-              className="bg-green-600 text-white py-2 w-full rounded hover:bg-green-700 transition"
-            >
-              Verify & Create Account
-            </button>
-            <button
-              onClick={() => {
-                setOtpSent(false);
-                setGeneratedOtp("");
-                setEnteredOtp("");
-              }}
-              className="text-sm text-blue-500 text-center w-full"
-            >
-              🔁 Resend OTP
-            </button>
-          </div>
+          // Sign in: allow either email/password or phone/OTP
+          authMode === "email" ? (
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">Email</label>
+                <input
+                  type="email"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                  {...register("email", { required: "Email is required" })}
+                />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+              </div>
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">Password</label>
+                <input
+                  type="password"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: { value: 6, message: "Minimum 6 characters" },
+                  })}
+                />
+                {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+              </div>
+              <button type="submit" className="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg shadow transition">
+                Sign In
+              </button>
+            </form>
+          ) : (
+            !phoneOtpSent ? (
+              <div className="space-y-5">
+                <label className="block text-gray-700 font-medium mb-1">Bangladeshi Phone</label>
+                <input
+                  type="text"
+                  placeholder="e.g. +8801XXXXXXXXX or 01XXXXXXXXX"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                  value={phone}
+                  onChange={e => setPhone(e.target.value)}
+                />
+                <div ref={recaptchaRef} id="recaptcha-container" />
+                <button
+                  onClick={handleSendPhoneOtp}
+                  className="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg shadow transition"
+                >
+                  Send OTP
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-5">
+                <input
+                  type="text"
+                  placeholder="Enter OTP"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                  value={phoneOtp}
+                  onChange={e => setPhoneOtp(e.target.value)}
+                />
+                <button
+                  onClick={handleVerifyPhoneOtp}
+                  className="w-full py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white font-semibold text-lg shadow transition"
+                >
+                  Verify & Sign In
+                </button>
+                <button
+                  onClick={() => {
+                    setPhoneOtpSent(false);
+                    setPhoneOtp("");
+                  }}
+                  className="w-full text-blue-600 hover:underline text-sm"
+                >
+                  🔁 Resend OTP
+                </button>
+              </div>
+            )
+          )
         )}
-
-        <p className="text-center mt-4 text-sm">
+        <p className="text-center mt-6 text-sm">
           {isSignUp ? "Already have an account?" : "Don't have an account?"}
           <button
-            className="text-blue-600 font-semibold ml-1"
-            onClick={() => resetStates()}
+            className="text-blue-600 font-semibold ml-1 hover:underline"
+            onClick={() => setIsSignUp((prev) => !prev)}
           >
             {isSignUp ? "Sign In" : "Sign Up"}
           </button>
         </p>
-
-        <div className="mt-4 text-center">
-          <button
-            onClick={() => {
-              setShowAuthModal(false);
-              resetStates();
-            }}
-            className="text-gray-500"
-          >
-            Close
-          </button>
-        </div>
       </div>
     </div>
   );

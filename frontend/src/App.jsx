@@ -113,7 +113,7 @@ import Books from "./components/books/Books";
 import AllBooks from "./components/books/AllBooks";
 import BookDetails from "./components/books/BookDetails";
 
-import AuthForm from "./components/login/AuthModal";
+import AuthPage from "./components/Login/AuthPage";
 import About from "./components/about/About";
 import Services from "./components/services/Services";
 
@@ -171,7 +171,8 @@ const App = () => {
         <Route path="/book-details/:id" element={<BookDetails />} />
 
         {/* Other sections (only if you want them to be navigable separately) */}
-        <Route path="/auth" element={<AuthForm />} />
+        <Route path="/login" element={<AuthPage mode="login" />} />
+        <Route path="/signup" element={<AuthPage mode="signup" />} />
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<Services />} />
 

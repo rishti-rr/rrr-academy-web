@@ -376,7 +376,7 @@ const Payment = () => {
 
     // ✅ Send email
     const templateParams = {
-      user_email: email,
+      to_email: email, // <-- must match your EmailJS template variable for recipient
       user_name: userName,
       order_id: fakeOrder._id,
       mobile_number: mobileNumber,

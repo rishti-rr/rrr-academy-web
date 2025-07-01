@@ -5,3 +5,5 @@ backend/config/firebase-key.json
 backend/config/firebaseAdmin.js
 
 frontend/src/components/Login/firebaseConfig.js
+
+backend/config/serviceAccountKey.json
