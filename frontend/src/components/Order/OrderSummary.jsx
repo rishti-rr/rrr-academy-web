@@ -1,20 +1,41 @@
-import React from "react";
 import { useCart } from "../../context/CartContext";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const OrderSummary = () => {
   const { cart } = useCart();
-  const navigate = useNavigate();
+  const { user } = useAuth();
 
   const totalPrice = cart.reduce((sum, item) => sum + (item.price ?? 0), 0);
 
-  const handleProceedToPayment = () => {
-    navigate("/payment", {
-      state: {
-        cartItems: cart,
-        totalAmount: totalPrice,
-      },
-    });
+  const handleProceedToPayment = async () => {
+    // Use real user info if available
+    try {
+      if (!totalPrice || totalPrice <= 0) {
+        alert("Cart is empty or invalid total price.");
+        return;
+      }
+      const res = await fetch("http://localhost:5000/api/sslcommerz/initiate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: totalPrice,
+          email: user?.email || "test@rrr.com",
+          name: user?.displayName || "RRR User",
+          phone: user?.phoneNumber || "01700000000",
+        }),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to initiate payment.");
+      }
+      const data = await res.json();
+      if (data.GatewayPageURL) {
+        window.location.href = data.GatewayPageURL;
+      } else {
+        alert("Failed to initiate payment. Please try again.");
+      }
+    } catch (err) {
+      alert("Payment gateway error: " + err.message);
+    }
   };
 
   return (

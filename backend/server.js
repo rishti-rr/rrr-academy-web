@@ -52,6 +52,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const cartRoutes = require("./routes/cartRoutes");
 const orderRoutes = require("./routes/orders");
 // const otpRoutes = require('./routes/otpRoutes');
+const sslcommerzRoutes = require('./routes/sslcommerzRoutes');
 
 
 app.use("/api/books", bookRoutes);
@@ -61,6 +62,7 @@ app.use('/api/admin', adminRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 // app.use('/api/otp', otpRoutes);
+app.use('/api/sslcommerz', sslcommerzRoutes);
 
 // ✅ Then add the 404 fallback route
 app.use((req, res, next) => {
