@@ -94,7 +94,7 @@ const jwt = require('jsonwebtoken');
 const Course = require('../models/Course');
 const Book = require('../models/Book');
 const Admin = require('../models/Admin');
-const admin = require('../config/firebaseAdmin'); // Firebase admin SDK instance
+const admin = require('../config/firebaseAdmin'); 
 
 const generateToken = (id, role) => {
   return jwt.sign({ id, role }, process.env.JWT_SECRET, {

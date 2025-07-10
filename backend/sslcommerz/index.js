@@ -21,6 +21,3 @@ const postData = {
   product_profile: "general"
 };
 
-// For demonstration only
-// (Uncomment to test directly)
-// initiatePayment(postData).then(console.log).catch(console.error);

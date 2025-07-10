@@ -121,7 +121,7 @@ const Receipt = () => {
   const rawName = user?.displayName || order?.userName || user?.email?.split('@')[0] || 'Customer';
   const displayName = rawName.charAt(0).toUpperCase() + rawName.slice(1).toLowerCase();
 
-  // ✅ Send email when order is available
+  // Send email when order is available
   useEffect(() => {
     if (!order) return;
 
@@ -144,7 +144,7 @@ const Receipt = () => {
       "-bbgl4C8kYUC6OkQJ"      
     )
     .then(() => console.log("📨 Receipt sent to email"))
-    .catch(err => console.error("❌ Email sending error:", err));
+    .catch(err => console.error("Email sending error:", err));
   }, [order]);
 
   if (!order) {

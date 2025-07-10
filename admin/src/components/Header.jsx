@@ -26,10 +26,9 @@ export default function Header() {
   };
 
   const logout = () => {
-    // Clear auth or user data from localStorage/sessionStorage if any
+    
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
-    // Redirect to login page (change URL as per your routing)
     window.location.href = "/login";
   };
 

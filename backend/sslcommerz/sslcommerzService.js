@@ -1,4 +1,3 @@
-// SSLCommerz service utility for payment session creation
 const axios = require('axios');
 
 async function initiatePayment(postData) {

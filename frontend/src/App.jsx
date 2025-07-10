@@ -35,7 +35,7 @@
 
 //   return (
 //     <main className="overflow-x-hidden bg-white text-dark">
-//       {/* ✅ Only show these on homepage */}
+//       {/*  Only show these on homepage */}
 //       {isHomePage && (
 //         <>
 //           <Hero />
@@ -60,7 +60,7 @@
 //         </>
 //       )}
 
-//       {/* ✅ Page routes */}
+//       {/*  Page routes */}
 //       <Routes>
 //         {/* Course pages */}
 //         <Route path="/all-courses" element={<AllCourses />} />
@@ -79,7 +79,7 @@
 //         <Route path="/admin-login" element={<AdminLogin />} />
 //         <Route path="/admin" element={<AdminPanel />} />
 
-//          {/* ✅ Protected user routes */}
+//          {/*  Protected user routes */}
 //         {/* <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} /> */}
 //         <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
 //         <Route path="/order-summary" element={<ProtectedRoute><OrderSummary /></ProtectedRoute>} />
@@ -105,12 +105,12 @@ import Banner from "./components/banner/Banner";
 import Subscribe from "./components/subscribe/Subscribe";
 import Footer from "./components/footer/Footer";
 
-import Courses from "./components/courses/Courses";
-import AllCourses from "./components/courses/AllCourses";
+import Courses from "./components/Courses/Courses";
+import AllCourses from "./components/Courses/AllCourses";
 import CourseDetails from "./components/courses/CourseDetails";
 
-import Books from "./components/books/Books";
-import AllBooks from "./components/books/AllBooks";
+import Books from "./components/Books/Books";
+import AllBooks from "./components/Books/AllBooks";
 import BookDetails from "./components/books/BookDetails";
 
 import AuthPage from "./components/Login/AuthPage";
@@ -144,7 +144,7 @@ const App = () => {
         draggable
       />
 
-      {/* ✅ Only show these on homepage */}
+      {/*  Only show these on homepage */}
       {isHomePage && (
         <>
           <Hero />
@@ -160,7 +160,7 @@ const App = () => {
         </>
       )}
 
-      {/* ✅ Page routes */}
+      {/*  Page routes */}
       <Routes>
         {/* Course pages */}
         <Route path="/all-courses" element={<AllCourses />} />
@@ -180,7 +180,7 @@ const App = () => {
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminPanel />} />
 
-        {/* ✅ Protected user routes */}
+        {/*  Protected user routes */}
         {/* <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} /> */}
         <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
         <Route path="/order-summary" element={<ProtectedRoute><OrderSummary /></ProtectedRoute>} />

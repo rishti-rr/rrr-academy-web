@@ -24,7 +24,7 @@ const handleSubmit = (e) => {
   e.preventDefault();
 
   if (editingId) {
-    // Update locally only
+   
     setCourses(
       courses.map((c) => c._id === editingId ? { ...c, ...formData } : c)
     );
@@ -32,11 +32,11 @@ const handleSubmit = (e) => {
     resetForm();
     setTimeout(() => setSuccessMessage(""), 2000);
   } else {
-    // Add temporary course
+    
     const tempId = Date.now().toString();
     const newCourse = { ...formData, _id: tempId };
     setCourses([...courses, newCourse]);
-    setSuccessMessage("✅ Course added (temporary)");
+    setSuccessMessage("Course added (temporary)");
     resetForm();
     setTimeout(() => setSuccessMessage(""), 2000);
   }
@@ -52,7 +52,7 @@ const handleSubmit = (e) => {
   const handleDelete = (id) => {
   if (confirm("Are you sure?")) {
     setCourses(courses.filter((c) => c._id !== id));
-    setSuccessMessage("❌ Course deleted (temporary)");
+    setSuccessMessage("Course deleted (temporary)");
     setTimeout(() => setSuccessMessage(""), 2000);
   }
 };
@@ -136,7 +136,7 @@ const handleSubmit = (e) => {
   );
 }
 
-// Styles (same as Books.jsx)
+
 const inputStyle = {
   display: "block",
   width: "100%",

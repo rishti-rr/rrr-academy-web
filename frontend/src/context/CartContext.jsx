@@ -74,7 +74,6 @@ export const CartProvider = ({ children }) => {
   const { user } = useAuth();
   const [cart, setCart] = useState([]);
 
-  // ✅ Load cart from localStorage (per user)
   useEffect(() => {
     if (user) {
       const savedCart = JSON.parse(localStorage.getItem(`cart_${user.uid}`)) || [];
@@ -84,7 +83,7 @@ export const CartProvider = ({ children }) => {
     }
   }, [user]);
 
-  // ✅ Add to cart with type (must be 'course' or 'book')
+
 const addToCart = (item) => {
   if (!user) {
     toast.error("Please log in to add items to the cart.");
@@ -98,7 +97,6 @@ const addToCart = (item) => {
 };
 
 
-  // ✅ Remove item from cart
   const removeFromCart = (itemId) => {
     const updatedCart = cart.filter((item) => item._id !== itemId);
     setCart(updatedCart);
@@ -109,7 +107,6 @@ const addToCart = (item) => {
     }
   };
 
-  // ✅ Clear entire cart
   const clearCart = () => {
     setCart([]);
     if (user) {
@@ -119,7 +116,7 @@ const addToCart = (item) => {
     }
   };
 
-  // ✅ Count per item type
+ 
   const courseCount = cart.filter((item) => item.type === 'course').length;
   const bookCount = cart.filter((item) => item.type === 'book').length;
 

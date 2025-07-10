@@ -17,8 +17,8 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
   <Router>
-    <AuthProvider> {/* ✅ Wrap App with AuthProvider */}
-      <CartProvider> {/* ✅ Wrap App with CartProvider */}
+    <AuthProvider> 
+      <CartProvider> 
         <App />
       </CartProvider>
     </AuthProvider>

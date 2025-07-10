@@ -1,32 +1,3 @@
-// import nodemailer from 'nodemailer';
-
-// const transporter = nodemailer.createTransport({
-//   service: 'Gmail',
-//   auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-// });
-
-// export async function sendReceiptEmail(email, items, total, orderId) {
-//   const itemsHtml = items.map(i =>
-//     `<li>${i.title} (${i.type}) - ${i.price.toLocaleString()} BDT</li>`
-//   ).join('');
-
-//   const html = `
-//     <h2>Payment Receipt</h2>
-//     <p>Order ID: <strong>${orderId}</strong></p>
-//     <p>Total Paid: <strong>${total.toLocaleString()} BDT</strong></p>
-//     <ul>${itemsHtml}</ul>
-//     <p>Thank you for your purchase!</p>
-//   `;
-
-//   await transporter.sendMail({
-//     from: process.env.EMAIL_USER,
-//     to: email,
-//     subject: 'Your Purchase Receipt',
-//     html,
-//   });
-// }
-
-
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 dotenv.config();

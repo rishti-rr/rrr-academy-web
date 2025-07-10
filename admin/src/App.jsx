@@ -7,10 +7,10 @@ import Dashboard from "./pages/Dashboard";
 import Users from "./pages/Users";
 import Courses from "./pages/Courses";
 import Books from "./pages/Books";
-import Login from "./pages/Login"; // Login page
-import PrivateAdminRoute from "./components/PrivateAdminRoute"; // Protected route
+import Login from "./pages/Login"; 
+import PrivateAdminRoute from "./components/PrivateAdminRoute"; 
 
-// Layout: Sidebar + Header + page content wrapper
+
 const Layout = ({ children }) => {
   return (
     <div style={styles.appWrapper}>
@@ -79,7 +79,7 @@ export default function App() {
   );
 }
 
-// Styles
+
 const styles = {
   appWrapper: {
     display: "flex",

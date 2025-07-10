@@ -4,7 +4,7 @@ const router = express.Router();
 const { sendOTP } = require('../twilioService');
 const verifyRecaptcha = require('../utils/verifyRecaptcha');
 
-const otpStore = new Map(); // In-memory OTP store (for demo)
+const otpStore = new Map(); 
 
 router.post('/send-otp', async (req, res) => {
   const { phone, recaptchaToken } = req.body;

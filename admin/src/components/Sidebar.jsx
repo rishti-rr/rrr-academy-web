@@ -15,7 +15,7 @@ const Sidebar = () => {
     height: "100vh",
     width: "250px",
     backgroundColor: "#1E293B", // dark gray 
-    // backgroundColor: "#1A202C", // dark gray 
+
     color: "white",
     display: "flex",
     flexDirection: "column",

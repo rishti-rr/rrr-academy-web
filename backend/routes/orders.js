@@ -26,8 +26,8 @@ router.post('/', async (req, res) => {
 
     res.status(201).json(order);
   } catch (err) {
-  console.log("Inside order error catch block");  // এটা দাও দেখতে এখানে আসছে কি না
-  console.error("❌ Order Error:", err);
+  console.log("Inside order error catch block");  
+  console.error(" Order Error:", err);
   res.status(500).json({ error: "Order creation failed" });
 }
 });

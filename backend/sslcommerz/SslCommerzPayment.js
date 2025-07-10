@@ -1,4 +1,3 @@
-// Unified SSLCommerz Payment Class (imported from your master/api/payment-controller.js)
 const httpCall = require("../../SSLCommerz-NodeJS-master/api/fetch");
 const paymentInitDataProcess = require("../../SSLCommerz-NodeJS-master/api/payment-init-data-process");
 

@@ -24,12 +24,11 @@ const AuthModal = ({ setShowAuthModal }) => {
   const [confirmationResult, setConfirmationResult] = useState(null);
   const recaptchaRef = useRef(null);
 
-  // Validate Bangladeshi phone number: +8801XXXXXXXXX or 01XXXXXXXXX
+
   const isValidBangladeshiPhone = (number) => {
     return /^((\+8801|01)[3-9]\d{8})$/.test(number);
   };
 
-  // --- SIGN UP: require both email and phone, send OTP to phone, create account after OTP verification ---
   const handleSignupOtpSend = async (data) => {
     setErrorMessage("");
     if (!isValidBangladeshiPhone(data.phone)) {
@@ -59,7 +58,7 @@ const AuthModal = ({ setShowAuthModal }) => {
     try {
       await confirmationResult.confirm(phoneOtp);
       await createUserWithEmailAndPassword(auth, formData.email, formData.password);
-      alert("✅ Account created!");
+      alert(" Account created!");
       setShowAuthModal(false);
       resetStates();
     } catch (err) {
@@ -86,7 +85,7 @@ const AuthModal = ({ setShowAuthModal }) => {
       setErrorMessage("Enter a valid Bangladeshi phone number (e.g. +8801XXXXXXXXX or 01XXXXXXXXX)");
       return;
     }
-    // Always send as +880 format for Firebase
+   
     let formattedPhone = phone;
     if (phone.startsWith("01")) {
       formattedPhone = "+88" + phone;
@@ -107,7 +106,7 @@ const AuthModal = ({ setShowAuthModal }) => {
     if (!confirmationResult) return;
     try {
       await confirmationResult.confirm(phoneOtp);
-      alert("✅ Phone sign-in successful!");
+      alert("Phone sign-in successful!");
       setShowAuthModal(false);
       resetStates();
     } catch (err) {
@@ -137,7 +136,7 @@ const AuthModal = ({ setShowAuthModal }) => {
       } else {
         try {
           await signInWithEmailAndPassword(auth, data.email, data.password);
-          alert("✅ Sign-In Successful!");
+          alert("Sign-In Successful!");
           setShowAuthModal(false);
           resetStates();
         } catch (error) {

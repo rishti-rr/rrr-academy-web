@@ -10,7 +10,7 @@ import {
 import { IoClose, IoEye, IoEyeOff } from "react-icons/io5";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { AuthContext } from "../../context/AuthContext";
-import { useCart } from "../../context/CartContext"; // ✅ import Cart Context
+import { useCart } from "../../context/CartContext"; 
 
 const NavbarMenu = [
   { id: 1, title: "Home", path: "/" },
@@ -27,7 +27,7 @@ const Navbar = () => {
     setShowAuthModal,
   } = useContext(AuthContext);
 
-  const { cart } = useCart(); // ✅ cart data
+  const { cart } = useCart();
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

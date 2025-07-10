@@ -122,7 +122,7 @@ const AuthPage = ({ mode = "login" }) => {
         pendingSignupData.email,
         pendingSignupData.password
       );
-      alert("✅ Account created!");
+      alert("Account created!");
       if (timerId) clearInterval(timerId);
       navigate("/");
     } catch (err) {
