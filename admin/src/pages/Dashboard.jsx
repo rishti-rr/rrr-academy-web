@@ -301,7 +301,7 @@ import Card from "../components/Card";
 
 const Dashboard = () => {
   const stats = [
-    { title: "Total Users", value: 6, icon: FaUser, bgColor: "#5A67D8" },
+    { title: "Total Users", value: 5, icon: FaUser, bgColor: "#5A67D8" },
     { title: "Total Courses", value: 30, icon: FaChalkboardTeacher, bgColor: "#48BB78" },
     { title: "Total Books", value: 30, icon: FaBook, bgColor: "#4299E1" },
   ];
