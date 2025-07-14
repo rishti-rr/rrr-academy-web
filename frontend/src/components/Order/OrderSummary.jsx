@@ -1,40 +1,26 @@
+import React from "react";
 import { useCart } from "../../context/CartContext";
-import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
 
 const OrderSummary = () => {
   const { cart } = useCart();
-  const { user } = useAuth();
-
   const totalPrice = cart.reduce((sum, item) => sum + (item.price ?? 0), 0);
 
+  // Initiates payment by calling backend and redirecting to SSLCommerz
   const handleProceedToPayment = async () => {
-    // Use real user info if available
     try {
-      if (!totalPrice || totalPrice <= 0) {
-        alert("Cart is empty or invalid total price.");
-        return;
-      }
-      const res = await fetch("http://localhost:5000/api/sslcommerz/initiate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: totalPrice,
-          email: user?.email || "test@rrr.com",
-          name: user?.displayName || "RRR User",
-          phone: user?.phoneNumber || "01700000000",
-        }),
+      const response = await axios.post("/api/sslcommerz/initiate", {
+        cart,
+        total: totalPrice,
       });
-      if (!res.ok) {
-        throw new Error("Failed to initiate payment.");
-      }
-      const data = await res.json();
-      if (data.GatewayPageURL) {
-        window.location.href = data.GatewayPageURL;
+      const { GatewayPageURL } = response.data;
+      if (GatewayPageURL) {
+        window.location.href = GatewayPageURL;
       } else {
         alert("Failed to initiate payment. Please try again.");
       }
-    } catch (err) {
-      alert("Payment gateway error: " + err.message);
+    } catch (error) {
+      alert("Payment initiation failed. Please try again.");
     }
   };
 
